@@ -479,8 +479,13 @@ def assign_driver_api():
         # Update delivery with assigned driver
         deliveries_col.update_one(
             {"_id": ObjectId(delivery_id)},
-            {"$set": {"driver_id": driver_id, "assigned_driver_name": driver["name"]}}
+            {"$set": {
+                "assigned_driver_id": str(driver["_id"]),
+                "assigned_driver_name": driver["name"],
+                "assigned_driver_phone": driver.get("phone", "")
+            }}
         )
+
 
         # Return updated delivery info for frontend
         updated_delivery = deliveries_col.find_one({"_id": ObjectId(delivery_id)})
@@ -560,7 +565,6 @@ def delete_driver(driver_id):
         return jsonify({"success": True})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
 
 # --- Feedback & Stats ---------------------------------------------------------
 
