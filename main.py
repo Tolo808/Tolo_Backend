@@ -187,7 +187,7 @@ def add_delivery():
         "driver_id": None,
         "status": "pending",
         "notified": False,
-        "timestamp": datetime.utcnow(),
+        "timestamp": now_addis.strftime("%Y-%m-%d %I:%M:%S %p"),
     }
 
     try:
