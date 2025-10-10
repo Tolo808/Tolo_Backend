@@ -163,6 +163,7 @@ def get_deliveries():
 
 from datetime import datetime
 import pytz
+from flask import request, jsonify
 
 @app.route("/api/add_delivery", methods=["POST"])
 def add_delivery():
@@ -174,7 +175,7 @@ def add_delivery():
         if field not in data or not data[field]:
             return jsonify({"success": False, "error": f"{field} is required"}), 400
 
-    # --- Define now_addis ---
+    # --- Define Addis Ababa timezone timestamp ---
     addis_tz = pytz.timezone("Africa/Addis_Ababa")
     now_addis = datetime.now(addis_tz)
 
@@ -187,20 +188,20 @@ def add_delivery():
         "sender_phone": data["sender_phone"],
         "receiver_phone": data["receiver_phone"],
         "full_address": data.get("full_address", ""),
-        "Quantity": data.get("quantity", 0),  # consider renaming to lowercase 'quantity'
+        "quantity": data.get("quantity", 0),  # ✅ lowercase for consistency
         "item_description": data.get("item_description", ""),
         "price": data.get("price", None),
         "delivery_type": data.get("delivery_type", "payable"),
         "driver_id": None,
         "status": "pending",
         "notified": False,
-        "timestamp": now_addis.strftime("%Y-%m-%d %I:%M:%S %p"),
+        "timestamp": now_addis.strftime("%Y-%m-%d %H:%M:%S"),  # ✅ 24-hour format
     }
 
     try:
         result = deliveries_col.insert_one(delivery)
         delivery["_id"] = str(result.inserted_id)
-        return jsonify({"success": True, "delivery": delivery})
+        return jsonify({"success": True, "delivery": delivery}), 201
     except Exception as e:
         print("Error adding delivery:", e)
         return jsonify({"success": False, "error": "Database error"}), 500
