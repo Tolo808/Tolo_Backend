@@ -161,6 +161,9 @@ def get_deliveries():
 
 
 
+from datetime import datetime
+import pytz
+
 @app.route("/api/add_delivery", methods=["POST"])
 def add_delivery():
     data = request.get_json()
@@ -171,6 +174,10 @@ def add_delivery():
         if field not in data or not data[field]:
             return jsonify({"success": False, "error": f"{field} is required"}), 400
 
+    # --- Define now_addis ---
+    addis_tz = pytz.timezone("Africa/Addis_Ababa")
+    now_addis = datetime.now(addis_tz)
+
     # Set default values if missing
     delivery = {
         "source": data.get("source", "web"),
@@ -180,7 +187,7 @@ def add_delivery():
         "sender_phone": data["sender_phone"],
         "receiver_phone": data["receiver_phone"],
         "full_address": data.get("full_address", ""),
-        "Quantity": data.get("quantity", 0),
+        "Quantity": data.get("quantity", 0),  # consider renaming to lowercase 'quantity'
         "item_description": data.get("item_description", ""),
         "price": data.get("price", None),
         "delivery_type": data.get("delivery_type", "payable"),
