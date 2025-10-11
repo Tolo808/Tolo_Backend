@@ -187,14 +187,15 @@ def add_delivery():
         "sender_phone": data["sender_phone"],
         "receiver_phone": data["receiver_phone"],
         "full_address": data.get("full_address", ""),
-        "quantity": data.get("quantity", 0),  
+        "Quantity": data.get("Quantity", 0),  
         "item_description": data.get("item_description", ""),
         "price": data.get("price", None),
         "delivery_type": data.get("delivery_type", "payable"),
+        "payment_from_sender_or_receiver": data.get("payment_from_sender_or_receiver", ""),  
         "driver_id": None,
         "status": "pending",
         "notified": False,
-        "timestamp": now_addis.strftime("%Y-%m-%d %H:%M:%S"), 
+        "timestamp": now_addis.strftime("%Y-%m-%d %H:%M:%S"),
     }
 
     try:
