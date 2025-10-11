@@ -9,7 +9,7 @@ import os
 import re
 import requests
 
-# --- Setup -------------------------------------------------------------------
+#Setup
 load_dotenv()
 
 AFRO_TOKEN = os.getenv("AFRO_TOKEN")
@@ -29,10 +29,10 @@ feedback_col = db["feedback"]
 
 drivers_ = client["drivers"]
 drivers_col = drivers_["drivers"]
-# keep drivers in one DB for simplicity
 
 
-# --- Helpers -----------------------------------------------------------------
+
+#Helpers
 @app.route("/", defaults={"path": ""})
 @app.route("/<path:path>")
 def serve_react(path):
@@ -50,7 +50,6 @@ def to_dt(val):
     if isinstance(val, datetime):
         return val
     try:
-        # try ISO string
         return datetime.fromisoformat(val)
     except Exception:
         return None
@@ -130,7 +129,7 @@ def send_sms(phone_number, message):
     return False
 
 
-# --- Deliveries API -----------------------------------------------------------
+# Deliveries API
 @app.get("/api/deliveries")
 def get_deliveries():
     try:
@@ -175,7 +174,7 @@ def add_delivery():
         if field not in data or not data[field]:
             return jsonify({"success": False, "error": f"{field} is required"}), 400
 
-    # --- Define Addis Ababa timezone timestamp ---
+    # Define Addis Ababa timezone timestamp
     addis_tz = pytz.timezone("Africa/Addis_Ababa")
     now_addis = datetime.now(addis_tz)
 
@@ -188,14 +187,14 @@ def add_delivery():
         "sender_phone": data["sender_phone"],
         "receiver_phone": data["receiver_phone"],
         "full_address": data.get("full_address", ""),
-        "quantity": data.get("quantity", 0),  # ✅ lowercase for consistency
+        "quantity": data.get("quantity", 0),  
         "item_description": data.get("item_description", ""),
         "price": data.get("price", None),
         "delivery_type": data.get("delivery_type", "payable"),
         "driver_id": None,
         "status": "pending",
         "notified": False,
-        "timestamp": now_addis.strftime("%Y-%m-%d %H:%M:%S"),  # ✅ 24-hour format
+        "timestamp": now_addis.strftime("%Y-%m-%d %H:%M:%S"), 
     }
 
     try:
