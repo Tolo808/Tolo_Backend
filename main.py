@@ -372,31 +372,18 @@ def notify_driver():
         collect_from = delivery.get("payment_from_sender_or_receiver", "N/A")
 
         message_driver = (
-            f"New Delivery Order\n"
-            f"------------------\n"
-            f"From: {senderphone}\n"
-            f"Pickup: {pickup_location}\n"
-            f"To: {reciverphone}\n"
-            f"Dropoff: {dropoff_location}\n"
-            f"Item: {item}\n"
-            f"Qty: {quantity}\n"
-            f"Price: {price}\n"
-            f"Collect from: {collect_from}\n"
+            f"New Delivery Order\n",
+            f"Pickup/ከ: {senderphone}\n"
+            f"Drop/ለ : {reciverphone}\n"
+            f"Items: {item}\n"
+            f"Payment Collect from: {collect_from}\n"
         )
 
         message_customer = (
-            f"Your Driver Has Been Assigned\n"
-            f"From: {senderphone}\n"
-            f"Pickup: {pickup_location}\n"
-            f"To: {reciverphone}\n"
-            f"Dropoff: {dropoff_location}\n"
-            f"Driver Name: {driver.get('name', 'N/A')}\n"
-            f"Driver Phone: {driver.get('phone', 'N/A')}\n"
-            f"License Plate: {driver.get('vehicle_plate', 'N/A')}\n"
-            f"Item: {item}\n"
-            f"Quantity: {quantity}\n"
-            f"Price: {price}\n"
-            f"Thank you for choosing Tolo Delivery\n"
+            f"New Delivery Order / አዲስ ትዕዛዝ\n"  
+            f"Items: {item},({price})\n"
+            f"Driver Name: {driver.get('name', 'N/A')}, {driver.get('phone', 'N/A')}, {driver.get('vehicle_plate', 'N/A')}\n"
+            "Tolo Delivery"
         )
 
         # Send SMS
