@@ -382,6 +382,7 @@ def notify_driver():
 
         message_customer = (
             f"📦 New Delivery Order / አዲስ ትዕዛዝ\n"
+            f"Location: {pickup_location} to {dropoff_location}\n"
             f"Items: {item} ({price})\n"
             f"Driver: {driver.get('name', 'N/A')} - {driver.get('phone', 'N/A')} ({driver.get('vehicle_plate', 'N/A')})\n"
             "Tolo Delivery"
