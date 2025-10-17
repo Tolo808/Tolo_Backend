@@ -362,20 +362,22 @@ def notify_driver():
         if not driver or not driver.get("phone"):
             return jsonify({"success": False, "error": "Driver phone number not found"}), 400
 
-        
+        pickup_location = delivery.get("pickup", "N/A")
+        dropoff_location = delivery.get("dropoff", "N/A")
         senderphone = delivery.get("sender_phone", "N/A")
         reciverphone = delivery.get("receiver_phone", "N/A")
         item = delivery.get("item_description", "N/A")
         price = delivery.get("price", "N/A")
         collect_from = delivery.get("payment_from_sender_or_receiver", "N/A")
 
-    
+        
         message_driver = (
             f"🚚 New Delivery Order\n"
-            f"Pickup (Sender): {senderphone}\n"
-            f"Drop (Receiver): {reciverphone}\n"
-            f"Items: {item}\n"
+            f"Pickup (Sender): {pickup_location}({senderphone})\n"
+            f"Drop (Receiver): {dropoff_location}({reciverphone})\n"
+            f"Items: {item} ({price})\n"
             f"Payment Collect from: {collect_from}\n"
+
         )
 
         message_customer = (
@@ -385,12 +387,11 @@ def notify_driver():
             "Tolo Delivery"
         )
 
-        
         send_sms(driver.get("phone"), message_driver)
         send_sms(senderphone, message_customer)
         send_sms(reciverphone, message_customer)
 
-        
+        # Mark as notified
         deliveries_col.update_one(
             {"_id": ObjectId(delivery_id)}, {"$set": {"notified": True}}
         )
