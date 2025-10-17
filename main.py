@@ -358,46 +358,45 @@ def notify_driver():
             return jsonify({"success": False, "error": "No driver assigned"}), 400
 
         driver = drivers_col.find_one({"_id": ObjectId(delivery["assigned_driver_id"])})
+
         if not driver or not driver.get("phone"):
             return jsonify({"success": False, "error": "Driver phone number not found"}), 400
 
-        # Prepare messages
-        pickup_location = delivery.get("pickup", "N/A")
+        
         senderphone = delivery.get("sender_phone", "N/A")
-        dropoff_location = delivery.get("dropoff", "N/A")
         reciverphone = delivery.get("receiver_phone", "N/A")
         item = delivery.get("item_description", "N/A")
-        quantity = delivery.get("Quantity", "N/A")
         price = delivery.get("price", "N/A")
         collect_from = delivery.get("payment_from_sender_or_receiver", "N/A")
 
+    
         message_driver = (
-            f"New Delivery Order\n",
-            f"Pickup/ከ: {senderphone}\n"
-            f"Drop/ለ : {reciverphone}\n"
+            f"🚚 New Delivery Order\n"
+            f"Pickup (Sender): {senderphone}\n"
+            f"Drop (Receiver): {reciverphone}\n"
             f"Items: {item}\n"
             f"Payment Collect from: {collect_from}\n"
         )
 
         message_customer = (
-            f"New Delivery Order / አዲስ ትዕዛዝ\n"  
-            f"Items: {item},({price})\n"
-            f"Driver Name: {driver.get('name', 'N/A')}, {driver.get('phone', 'N/A')}, {driver.get('vehicle_plate', 'N/A')}\n"
+            f"📦 New Delivery Order / አዲስ ትዕዛዝ\n"
+            f"Items: {item} ({price})\n"
+            f"Driver: {driver.get('name', 'N/A')} - {driver.get('phone', 'N/A')} ({driver.get('vehicle_plate', 'N/A')})\n"
             "Tolo Delivery"
         )
 
-        # Send SMS
+        
         send_sms(driver.get("phone"), message_driver)
         send_sms(senderphone, message_customer)
         send_sms(reciverphone, message_customer)
 
-        # Mark as notified
+        
         deliveries_col.update_one(
             {"_id": ObjectId(delivery_id)}, {"$set": {"notified": True}}
         )
 
         return jsonify({"success": True, "message": "Driver and customer notified successfully"})
-    
+
     except Exception as e:
         print("❌ Error sending SMS:", e)
         return jsonify({"success": False, "error": str(e)}), 500
