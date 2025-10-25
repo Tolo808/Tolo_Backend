@@ -279,19 +279,24 @@ def get_drivers():
     drivers = [serialize_driver(d) for d in drivers_col.find().sort("name", 1)]
     return jsonify(drivers)
 
-
+from flask import request, jsonify
 @app.post("/api/drivers")
 def create_driver():
     body = request.get_json(force=True) or {}
     name = body.get("name")
     phone = body.get("phone")
     vehicle_plate = body.get("vehicle_plate")
+
     if not name:
         return jsonify({"error": "name required"}), 400
+
     drv = {"name": name, "phone": phone, "vehicle_plate": vehicle_plate}
     r = drivers_col.insert_one(drv)
     doc = serialize_driver(drivers_col.find_one({"_id": r.inserted_id}))
-    socketio.emit("driver_created", doc, broadcast=True)
+
+    # SocketIO emit removed
+    # socketio.emit("driver_created", doc, broadcast=True)
+
     return jsonify(doc), 201
 
 
@@ -544,22 +549,25 @@ def update_driver(driver_id):
             return jsonify({"error": "Driver not found"}), 404
         driver = drivers_col.find_one({"_id": ObjectId(driver_id)})
         driver["_id"] = str(driver["_id"])
-        socketio.emit("driver_updated", driver, broadcast=True)
+        # Removed socketio.emit
         return jsonify(driver)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
 
 # Delete a driver
-@app.delete("/api/drivers/<driver_id>")
+@app.route("/api/drivers/<driver_id>", methods=["DELETE"])
 def delete_driver(driver_id):
     try:
         result = drivers_col.delete_one({"_id": ObjectId(driver_id)})
         if result.deleted_count == 0:
             return jsonify({"error": "Driver not found"}), 404
-        socketio.emit("driver_deleted", {"_id": driver_id}, broadcast=True)
-        return jsonify({"success": True})
+
+        # Removed socketio.emit
+        return jsonify({"message": "Deleted successfully"}), 200
+
     except Exception as e:
+        print("❌ Error deleting driver:", e)
         return jsonify({"error": str(e)}), 500
 
 # --- Feedback & Stats ---------------------------------------------------------
